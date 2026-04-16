@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SAVVY-TECH GODY | VPN APP HUB</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --app-green: #25D366;
+            --app-bg: #0a0a0a;
+            --drawer-bg: #111;
+            --card-glass: rgba(255, 255, 255, 0.05);
+            --transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            margin: 0; background: var(--app-bg); color: #fff;
+            font-family: 'Inter', -apple-system, sans-serif; overflow-x: hidden;
+        }
+
+        /* --- UI COMPONENTS: APP BAR --- */
+        .app-header {
+            position: fixed; top: 0; width: 100%; height: 65px;
+            background: rgba(10, 10, 10, 0.98); backdrop-filter: blur(15px);
+            display: flex; align-items: center; padding: 0 20px;
+            border-bottom: 1px solid rgba(37, 211, 102, 0.25); z-index: 1000;
+            box-sizing: border-box;
+        }
+
+        .menu-toggle {
+            font-size: 1.6rem; color: var(--app-green); cursor: pointer;
+            margin-right: 20px; transition: 0.3s;
+        }
+        .menu-toggle:hover { transform: scale(1.1); }
+
+        .app-title { font-weight: 900; letter-spacing: 1.5px; font-size: 1.2rem; text-transform: uppercase; }
+        .app-title span { color: var(--app-green); text-shadow: 0 0 10px rgba(37, 211, 102, 0.4); }
+
+        /* --- SIDE DRAWER --- */
+        .side-drawer {
+            position: fixed; top: 0; left: -285px; width: 280px; height: 100%;
+            background: var(--drawer-bg); z-index: 2000; transition: var(--transition);
+            box-shadow: 15px 0 40px rgba(0,0,0,0.8); padding-top: 70px;
+        }
+        .side-drawer.open { left: 0; }
+
+        .drawer-item {
+            padding: 18px 25px; display: flex; align-items: center; gap: 15px;
+            text-decoration: none; color: #bbb; transition: 0.3s;
+            border-left: 4px solid transparent; font-size: 0.95rem;
+        }
+        .drawer-item:hover, .drawer-item.active {
+            background: rgba(37, 211, 102, 0.1); color: var(--app-green);
+            border-left: 4px solid var(--app-green);
+        }
+
+        .overlay {
+            position: fixed; top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.8); z-index: 1500; display: none;
+            backdrop-filter: blur(3px);
+        }
+        .overlay.active { display: block; }
+
+        /* --- MAIN CONTENT LAYOUT --- */
+        .main-content { padding-top: 90px; padding-bottom: 30px; }
+        .section-label { 
+            padding: 0 20px; font-size: 0.75rem; color: var(--app-green); 
+            text-transform: uppercase; letter-spacing: 2.5px; margin-bottom: 15px; 
+            font-weight: bold;
+        }
+
+        /* --- OFFICIAL HORIZONTAL ROW --- */
+        .horizontal-scroll {
+            display: flex; gap: 18px; overflow-x: auto; padding: 10px 20px 30px;
+            scroll-snap-type: x mandatory; scrollbar-width: none;
+        }
+        .horizontal-scroll::-webkit-scrollbar { display: none; }
+
+        .official-card {
+            min-width: 280px; height: 160px; background: #151515; border-radius: 15px;
+            position: relative; overflow: hidden; border: 1px solid #252525;
+            scroll-snap-align: center; cursor: pointer; transition: 0.4s;
+        }
+        .official-card:hover { border-color: var(--app-green); transform: scale(1.05); }
+
+        .card-img { width:100%; height:100%; background-size:cover; background-position:center; opacity: 0.4; transition: 0.5s; }
+        .official-card:hover .card-img { opacity: 0.7; transform: scale(1.1); }
+
+        .card-name { position: absolute; bottom: 15px; left: 15px; width: 90%; }
+        .card-name h3 { margin: 0; font-size: 1.1rem; color: #fff; text-shadow: 0 2px 4px #000; }
+        .card-name p { margin: 4px 0 0; font-size: 0.7rem; color: #ddd; line-height: 1.3; }
+
+        /* --- VERTICAL STACK LIST --- */
+        .vertical-stack { padding: 0 20px; display: flex; flex-direction: column; gap: 15px; margin-bottom: 50px; }
+
+        .stack-card {
+            width: 100%; background: var(--card-glass);
+            border-radius: 15px; display: flex; align-items: center;
+            padding: 18px; border: 1px solid #1a1a1a; cursor: pointer;
+            transition: 0.3s; box-sizing: border-box;
+        }
+        .stack-card:hover { background: rgba(37, 211, 102, 0.08); border-color: var(--app-green); transform: translateX(5px); }
+
+        .stack-icon { 
+            width: 55px; height: 55px; background: #111; border-radius: 12px; 
+            display: flex; align-items: center; justify-content: center; 
+            font-size: 1.6rem; color: var(--app-green); margin-right: 18px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+
+        .stack-info h4 { margin: 0; font-size: 1rem; color: #fff; }
+        .stack-info p { margin: 5px 0 0; font-size: 0.78rem; color: #888; line-height: 1.4; }
+
+        /* --- SOCIAL LINKS DOCK --- */
+        .social-dock {
+            display: flex; justify-content: center; gap: 20px;
+            padding: 25px; border-top: 1px solid #151515;
+        }
+        .social-icon {
+            width: 52px; height: 52px; background: #111; border: 1px solid #222; 
+            border-radius: 15px; display: flex; align-items: center; justify-content: center;
+            font-size: 1.5rem; color: #fff; text-decoration: none; transition: 0.3s;
+        }
+        .social-icon:hover {
+            color: var(--app-green); border-color: var(--app-green);
+            transform: translateY(-8px); box-shadow: 0 8px 20px rgba(37, 211, 102, 0.2);
+        }
+
+        /* --- FOOTER --- */
+        .app-footer { text-align: center; padding: 20px 20px 50px; color: #555; font-size: 0.75rem; line-height: 1.6; }
+        .app-footer b { color: var(--app-green); }
+    </style>
+</head>
+<body>
+
+    <div class="app-header">
+        <i class="fas fa-bars menu-toggle" onclick="toggleDrawer()"></i>
+        <div class="app-title">SAVVY-TECH <span>GODY</span></div>
+    </div>
+
+    <div class="overlay" id="overlay" onclick="toggleDrawer()"></div>
+    <div class="side-drawer" id="drawer">
+        <a href="index.html" class="drawer-item active"><i class="fas fa-home"></i> Home Page</a>
+        <a href="developer.html" class="drawer-item"><i class="fas fa-terminal"></i> Developer Option</a>
+        <a href="admins.html" class="drawer-item"><i class="fas fa-users-cog"></i> Page Admins</a>
+        <a href="reactions.html" class="drawer-item"><i class="fas fa-star"></i> Fake Reactions</a>
+        <hr style="border: 0; border-top: 1px solid #222; margin: 15px 25px;">
+        <a href="pricing.html" class="drawer-item"><i class="fas fa-crown"></i> Get Premium Files</a>
+    </div>
+
+    <div class="main-content">
+        
+        <div class="section-label">Official VPN Files</div>
+        <div class="horizontal-scroll">
+            
+            <div class="official-card" onclick="location.href='hat-files.html'">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1614064641938-3bbee52942c7?q=80&w=500');"></div>
+                <div class="card-name">
+                    <h3>HA TUNNEL PLUS</h3>
+                    <p>The ultimate ZW bypass. High-speed .HAT files for 24/7 stable browsing.</p>
+                </div>
+            </div>
+
+            <div class="official-card" onclick="location.href='socks-files.html'">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1558494949-ef010cbdcc51?q=80&w=500');"></div>
+                <div class="card-name">
+                    <h3>SOCKS IP TUNNEL</h3>
+                    <p>Advanced .SIP configs for gaming and low-latency streaming sessions.</p>
+                </div>
+            </div>
+
+            <div class="official-card" onclick="location.href='npv-files.html'">
+                <div class="card-img" style="background-image: url('https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=500');"></div>
+                <div class="card-name">
+                    <h3>NAPSTERNET V</h3>
+                    <p>Reliable V2Ray protocols for stable connections even on weak signals.</p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="section-label">Other Support Files</div>
+        <div class="vertical-stack">
+            
+            <div class="stack-card" onclick="location.href='v2ray.html'">
+                <div class="stack-icon"><i class="fas fa-bolt"></i></div>
+                <div class="stack-info">
+                    <h4>V2RAY CONFIGS</h4>
+                    <p>Fast VMess/VLESS files designed for high-bandwidth downloads and privacy.</p>
+                </div>
+            </div>
+
+            <div class="stack-card" onclick="location.href='ssh.html'">
+                <div class="stack-icon"><i class="fas fa-lock"></i></div>
+                <div class="stack-info">
+                    <h4>SSH TUNNELING</h4>
+                    <p>Classic Secure Shell configurations for steady and secure web browsing.</p>
+                </div>
+            </div>
+
+            <div class="stack-card" onclick="location.href='shadowsocks.html'">
+                <div class="stack-icon"><i class="fas fa-ghost"></i></div>
+                <div class="stack-info">
+                    <h4>SHADOWSOCKS</h4>
+                    <p>Ultra-stealth proxy protocols to bypass strict network firewalls unnoticed.</p>
+                </div>
+            </div>
+
+            <div class="stack-card" onclick="location.href='custom.html'">
+                <div class="stack-icon"><i class="fas fa-cog"></i></div>
+                <div class="stack-info">
+                    <h4>HTTP CUSTOM</h4>
+                    <p>Payload-based configuration files for pro users wanting deep network tweaks.</p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="section-label" style="text-align: center;">Stay Updated</div>
+        <div class="social-dock">
+            <a href="https://whatsapp.com/channel/0029VbCJsOK2ZjCftmoWkK3V" class="social-icon"><i class="fab fa-whatsapp"></i></a>
+            <a href="https://whatsapp.com/channel/0029VbCJsOK2ZjCftmoWkK3V" class="social-icon"><i class="fab fa-telegram-plane"></i></a>
+            <a href="https://whatsapp.com/channel/0029VbCJsOK2ZjCftmoWkK3V" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+            <a href="https://whatsapp.com/channel/0029VbCJsOK2ZjCftmoWkK3V" class="social-icon"><i class="fab fa-twitter"></i></a>
+        </div>
+
+        <footer class="app-footer">
+            POWERED BY <b>ELONSK</b> | SUPPORT: <b>+260 759184442</b><br>
+            © 2026 SAVVY-TECH GODY OFFICIAL APP
+        </footer>
+
+    </div>
+
+    <script>
+        function toggleDrawer() {
+            document.getElementById('drawer').classList.toggle('open');
+            document.getElementById('overlay').classList.toggle('active');
+        }
+    </script>
+</body>
+</html>
